@@ -1,0 +1,30 @@
+{
+  "DVTSourceControlWorkspaceBlueprintPrimaryRemoteRepositoryKey" : "CE087E07D57661612519BF053C6BEF980C143055",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyRepositoryLocationsKey" : {
+
+  },
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyStatesKey" : {
+    "CE087E07D57661612519BF053C6BEF980C143055" : 0,
+    "5A7047ED2461A5C45C611B4B3A7B7F0863F59996" : 0
+  },
+  "DVTSourceControlWorkspaceBlueprintIdentifierKey" : "71EC0242-38E4-41DE-AAF5-A1D496989CAC",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyPathsKey" : {
+    "CE087E07D57661612519BF053C6BEF980C143055" : "Nexmo\/",
+    "5A7047ED2461A5C45C611B4B3A7B7F0863F59996" : "..\/.."
+  },
+  "DVTSourceControlWorkspaceBlueprintNameKey" : "VerifyIosSdk",
+  "DVTSourceControlWorkspaceBlueprintVersion" : 204,
+  "DVTSourceControlWorkspaceBlueprintRelativePathToProjectKey" : "VerifyIosSdk.xcodeproj",
+  "DVTSourceControlWorkspaceBlueprintRemoteRepositoriesKey" : [
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/bitbucket.org\/ndv-lab\/cya-app-ios.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "5A7047ED2461A5C45C611B4B3A7B7F0863F59996"
+    },
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/github.com\/NDV-Lab\/verify-ios-sdk.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "CE087E07D57661612519BF053C6BEF980C143055"
+    }
+  ]
+}

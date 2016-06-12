@@ -111,7 +111,7 @@ static SDKDeviceProperties *instance;
     
     keychainError = SecItemCopyMatching((__bridge CFDictionaryRef)queryDict, (CFTypeRef *)&idResult);
         
-    if (keychainError == errSecSuccess) {
+    if (keychainError == noErr) {
         NSLog(@"Found keychain entry");
         NSString *identifier = [[NSString alloc] initWithBytes:[(__bridge_transfer NSData*)idResult bytes] length:[(__bridge NSData*)idResult length] encoding:NSUTF8StringEncoding];
         NSLog(@"Identifier = %@", identifier);
@@ -119,37 +119,30 @@ static SDKDeviceProperties *instance;
     } else if (keychainError == errSecItemNotFound) {
         NSLog(@"Keychain entry not found - creating a new one");
         // generate new identifier
-        NSString *deviceId = [self addUniqueDeviceIdentifierToKeychain];
+        NSUUID *newId = [[UIDevice currentDevice] identifierForVendor];
+        NSData *newIdData = [[newId UUIDString] dataUsingEncoding:NSUTF8StringEncoding];
+        NSLog(@"Nexmo UID = %@", [newId UUIDString]);
         
-        return deviceId;
+        NSMutableDictionary *keychainData = [[NSMutableDictionary alloc] init];
+        [keychainData setObject:(__bridge id)kSecClassGenericPassword forKey:(__bridge id)kSecClass];
+        [keychainData setObject:@"Nexmo UID" forKey:(__bridge id)kSecAttrLabel];
+        [keychainData setObject:@"Unique Identifier for Nexmo Services" forKey:(__bridge id)kSecAttrDescription];
+        [keychainData setObject:@"-no-data-" forKey:(__bridge id)kSecAttrAccount];
+        [keychainData setObject:[NEXMO_UID_NAME dataUsingEncoding:NSUTF8StringEncoding] forKey:(__bridge id)kSecAttrService];
+        [keychainData setObject:@"-no-data-" forKey:(__bridge id)kSecAttrComment];
+        [keychainData setObject:newIdData forKey:(__bridge id)kSecValueData];
         
+        keychainError = SecItemAdd((__bridge CFDictionaryRef)keychainData, NULL);
+        
+        if (keychainError == noErr) {
+            NSLog(@"Successfully added keychain entry");
+            return [newId UUIDString];
+        } else {
+            NSLog(@"Error adding new keychain entry");
+            return nil;
+        }
     } else {
-        NSLog(@"Failed to acquire deviceID from keychain with error %d", (int)keychainError);
-        return nil;
-    }
-}
-
--(NSString*)addUniqueDeviceIdentifierToKeychain {
-    NSUUID *newId = [[UIDevice currentDevice] identifierForVendor];
-    NSData *newIdData = [[newId UUIDString] dataUsingEncoding:NSUTF8StringEncoding];
-    NSLog(@"Nexmo UID = %@", [newId UUIDString]);
-
-    NSMutableDictionary *keychainData = [[NSMutableDictionary alloc] init];
-    [keychainData setObject:(__bridge id)kSecClassGenericPassword forKey:(__bridge id)kSecClass];
-    [keychainData setObject:@"Nexmo UID" forKey:(__bridge id)kSecAttrLabel];
-    [keychainData setObject:@"Unique Identifier for Nexmo Services" forKey:(__bridge id)kSecAttrDescription];
-    [keychainData setObject:@"-no-data-" forKey:(__bridge id)kSecAttrAccount];
-    [keychainData setObject:[NEXMO_UID_NAME dataUsingEncoding:NSUTF8StringEncoding] forKey:(__bridge id)kSecAttrService];
-    [keychainData setObject:@"-no-data-" forKey:(__bridge id)kSecAttrComment];
-    [keychainData setObject:newIdData forKey:(__bridge id)kSecValueData];
-
-    OSStatus keychainError = SecItemAdd((__bridge CFDictionaryRef)keychainData, NULL);
-
-    if (keychainError == noErr) {
-        NSLog(@"Successfully added keychain entry");
-        return [newId UUIDString];
-    } else {
-        NSLog(@"Failed to add new keychain entry with error %d", (int)keychainError);
+        NSLog(@"Serious error occurred! (should not get to this point in code)");
         return nil;
     }
 }
@@ -181,7 +174,7 @@ static SDKDeviceProperties *instance;
 -(bool)deleteUniqueDeviceIdentifier {
     NSMutableDictionary *queryDict = [[NSMutableDictionary alloc] init];
     [queryDict setObject:(__bridge id)kSecClassGenericPassword forKey:(__bridge id)kSecClass];
-    [queryDict setObject:[NEXMO_UID_NAME dataUsingEncoding:NSUTF8StringEncoding] forKey:(__bridge id)kSecAttrService];
+    [queryDict setObject:(__bridge id)kSecMatchLimitOne forKey:(__bridge id)kSecMatchLimit];
     
     OSStatus keychainError = SecItemDelete((__bridge CFDictionaryRef)queryDict);
     
@@ -189,11 +182,11 @@ static SDKDeviceProperties *instance;
         NSLog(@"Successfully deleted keychain entry");
         return true;
     } else if (keychainError == errSecItemNotFound) {
-        NSLog(@"Keychain item doesn't exist.");
-        return true;
+        NSLog(@"Couldn't find keychain item to delete");
+        return false;
     }
     
-    NSLog(@"Failed to delete keychain entry with error %d", (int)keychainError);
+    NSLog(@"Some other serious error occurred");
     return false;
 }
 
