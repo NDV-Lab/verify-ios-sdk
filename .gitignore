@@ -1,1 +1,3 @@
-VerifyIosSdk.xcodeproj/xcuserdata/Massimo.xcuserdatad
+*.xcuserdatad
+Build/*
+Output/*
