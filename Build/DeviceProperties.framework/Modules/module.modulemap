@@ -1,0 +1,6 @@
+framework module DeviceProperties {
+  umbrella header "DeviceProperties.h"
+
+  export *
+  module * { export * }
+}

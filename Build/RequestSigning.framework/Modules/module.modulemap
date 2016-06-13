@@ -1,0 +1,6 @@
+framework module RequestSigning {
+  umbrella header "RequestSigning.h"
+
+  export *
+  module * { export * }
+}
